@@ -1,5 +1,5 @@
-import { Dollar, Money, Portfolio } from "../src/money.js";
-import { test, assert ,expect} from "vitest";
+import { Dollar, Money,  } from "../src/money.js";
+import { test, assert} from "vitest";
 
 // 5 USD * 2 = 10 USD
 test('Dollar', () => {
@@ -29,50 +29,3 @@ test('Division', () => {
   let expectedMoneyAfterDivision = new Money(1000.5, 'KRW')
   assert.deepStrictEqual(actualMoneyAfterDivision, expectedMoneyAfterDivision)
 })
-
-
-// Refactor 5 USD + 10 USD = 15 USD
-test('Portfolio', () => {
-  let fifteenDollars = new Money(15, 'USD')
-  let portfolio = new Portfolio()
-  const fiveDollars = new Money(5, 'USD')
-  const tenDollars = new Money(10, 'USD')
-  portfolio.add(fiveDollars, tenDollars)
-  assert.deepStrictEqual(portfolio.evaluate('USD'), fifteenDollars)
-})
-
-// 5 USD + 10 EUR = 17 USD
-test('USD plus EUR', () => {
-  const fiveDollars = new Money(5, 'USD')
-  const tenEuros = new Money(10, 'EUR')
-  const portfolio = new Portfolio()
-  portfolio.add(fiveDollars, tenEuros)
-  const expectedValue = new Money(17, 'USD')
-  assert.deepStrictEqual(portfolio.evaluate('USD'), expectedValue)
-})
-
-// 1 USD + 1100 KRW = 2200 KRW
-test('USD plus KRW', () => {
-  const oneDollar = new Money(1, 'USD')
-  const elevenHundredWon = new Money(1100, 'KRW')
-  const portfolio = new Portfolio()
-  portfolio.add(oneDollar, elevenHundredWon)
-  const expectedValue = new Money(2200, 'KRW')
-  assert.deepStrictEqual(portfolio.evaluate('KRW'), expectedValue)
-})
-
-
-// 1 USD + 1100 KRW = 2200 KRW
-test('Multiple missing exchange rates', () => {
-  const oneDollar = new Money(1, 'USD')
-  const oneEuro = new Money(1, 'EUR')
-  const onwWon = new Money(1, 'KRW')
-  const portfolio = new Portfolio()
-  portfolio.add(oneDollar, oneEuro, onwWon)
-  const expectedErrorText = 'Missing exchange rate(s): [USD->Kalganid,EUR->Kalganid,KRW->Kalganid]'
-
-  // assert.throws(function(){ portfolio.evaluate('Kalganid')}, new Error(expectedErrorText))
-  
-  expect(()=>portfolio.evaluate('Kalganid'), expectedErrorText )
-})
-

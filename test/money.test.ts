@@ -1,5 +1,5 @@
 import { Dollar, Money, Portfolio } from "../src/money.js";
-import { test, assert } from "vitest";
+import { test, assert ,expect} from "vitest";
 
 // 5 USD * 2 = 10 USD
 test('Dollar', () => {
@@ -53,11 +53,26 @@ test('USD plus EUR', () => {
 
 // 1 USD + 1100 KRW = 2200 KRW
 test('USD plus KRW', () => {
-  const fiveDollars = new Money(1, 'USD')
+  const oneDollar = new Money(1, 'USD')
   const elevenHundredWon = new Money(1100, 'KRW')
   const portfolio = new Portfolio()
-  portfolio.add(fiveDollars, elevenHundredWon)
+  portfolio.add(oneDollar, elevenHundredWon)
   const expectedValue = new Money(2200, 'KRW')
   assert.deepStrictEqual(portfolio.evaluate('KRW'), expectedValue)
+})
+
+
+// 1 USD + 1100 KRW = 2200 KRW
+test('Multiple missing exchange rates', () => {
+  const oneDollar = new Money(1, 'USD')
+  const oneEuro = new Money(1, 'EUR')
+  const onwWon = new Money(1, 'KRW')
+  const portfolio = new Portfolio()
+  portfolio.add(oneDollar, oneEuro, onwWon)
+  const expectedErrorText = 'Missing exchange rate(s): [USD->Kalganid,EUR->Kalganid,KRW->Kalganid]'
+
+  // assert.throws(function(){ portfolio.evaluate('Kalganid')}, new Error(expectedErrorText))
+  
+  expect(()=>portfolio.evaluate('Kalganid'), expectedErrorText )
 })
 

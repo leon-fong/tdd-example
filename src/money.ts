@@ -56,13 +56,26 @@ export class Portfolio<T> {
       return money.amount
     }
     const key = money.currency + '->' + currency
-    return money.amount * exchangeRates.get(key)
+    const rate = exchangeRates.get(key)
+    if (rate === undefined) return undefined
+
+    return money.amount * rate
   }
 
   evaluate(currency: string) {
+    const failures: string[] = []
     const total = this.moneys.reduce((sum, money) => {
-      return sum + this.convert(money, currency)
+      const convertedAmount = this.convert(money, currency)
+      if (convertedAmount === undefined) {
+        failures.push(money.currency + '->' + currency)
+        return sum
+      }
+      return sum + convertedAmount
     }, 0)
-    return new Money(total, currency)
+
+    if (!failures.length) {
+      return new Money(total, currency)
+    }
+    throw new Error(`Missing exchange rate(s): [${failures.join()}]`)
   }
 }
